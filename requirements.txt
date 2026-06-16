@@ -1,0 +1,8 @@
+fastapi #libreria para uso de API
+uvicorn
+sqlalchemy # comunicacion entre supabase y el API
+psycopg2-binary
+python-dotenv
+pydantic[email]
+argon2 # encriptacion de la contraseña
+python-jose # JWT (Token) genera el token con la herramienta https://jwt.io
