@@ -1,9 +1,11 @@
 from sqlalchemy import Column
 from sqlalchemy import Integer
 from sqlalchemy import String
-from sqlalchemy.orm import declarative_base
+from sqlalchemy.orm import relationship
+from app.database import Base
+#from sqlalchemy.orm import declarative_base
 
-Base = declarative_base()
+#Base = declarative_base()
 
 class Usuario(Base):
     __tablename__ = "usuarios"
@@ -13,3 +15,5 @@ class Usuario(Base):
     cedula = Column(String)
     correo = Column(String, unique=True)
     password_hash = Column(String)
+
+    viviendas = relationship("Viviendas", back_populates="usuario")

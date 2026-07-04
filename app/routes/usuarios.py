@@ -131,3 +131,4 @@ def eliminar_usuario(
     return {
         "mensaje": "Usuario eliminado"
     }
+    
