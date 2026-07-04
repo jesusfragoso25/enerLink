@@ -10,10 +10,11 @@ router = APIRouter()
 
 @router.get("/me")
 def obtener_mi_perfil(
-    usuario_actual = Depends(get_current_user),
-    db: Session = Depends(get_db)
-
+    usuario_actual=Depends(get_current_user)
 ):
-  return {
-    "mensaje": "Usuario consultado"
-} # return usuario
+
+    return {
+        "nombre_completo": f"{usuario_actual['nombre']} {usuario_actual['apellido']}",
+        "telefono": usuario_actual["telefono"],
+        "correo": usuario_actual["correo"]
+    }

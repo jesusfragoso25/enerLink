@@ -14,6 +14,12 @@ router = APIRouter(
     tags=["Auth"]
 )
 
+@router.get("/health")
+def health():
+    return {
+        "status": "ok"
+    }
+
 @router.post("/login")
 def login(
     credentials: LoginRequest,

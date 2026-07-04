@@ -77,6 +77,7 @@ def get_current_user(
                 id_usuario,
                 nombre,
                 apellido,
+                telefono,
                 correo,
                 estado
             FROM usuarios
