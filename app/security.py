@@ -2,13 +2,14 @@ from argon2 import PasswordHasher
 from argon2.exceptions import VerifyMismatchError
 from jose import jwt
 from datetime import datetime, timedelta
-from fastapi.security import HTTPBearer
+#from fastapi.security import HTTPBearer
 from jose import jwt, JWTError
 from fastapi import Depends
 from fastapi import HTTPException
 from sqlalchemy.orm import Session
 from sqlalchemy import text
 from app.database import get_db
+from fastapi import Depends, HTTPException, Cookie
 
 
 from app.config import (
@@ -45,9 +46,9 @@ def create_access_token(data: dict):
         algorithm=ALGORITHM
     )
 
-security = HTTPBearer()
+#security = HTTPBearer()
 
-def verify_token(credentials=Depends(security)):
+"""def verify_token(credentials=Depends(security)):
     token = credentials.credentials
     try:
 
@@ -62,10 +63,34 @@ def verify_token(credentials=Depends(security)):
         raise HTTPException(
             status_code=401,
             detail="Token inválido"
+        )"""
+
+def verify_token(access_token: str | None = Cookie(default=None)):
+    if access_token is None:
+        raise HTTPException(
+            status_code=401,
+            detail="No autenticado"
         )
 
-#El frontend debe de almacenar el token
+    try:
 
+        payload = jwt.decode(
+            access_token,
+            SECRET_KEY,
+            algorithms=[ALGORITHM]
+        )
+
+        return payload
+
+    except JWTError:
+
+        raise HTTPException(
+            status_code=401,
+            detail="Token inválido"
+        )
+    
+
+## El token se almacena automáticamente en una cookie HttpOnly
 def get_current_user(
     payload=Depends(verify_token),
     db: Session = Depends(get_db)

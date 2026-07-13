@@ -8,12 +8,12 @@ from app.routes.gateways import router as router_gateways
 from app.routes.tipos_dispositivo import router as router_tipos_dispositivo
 from app.routes.tipo_usuario import router as  router_tipo_usuario
 
-from app.models.usuario import Usuario
-from app.models.viviendas import Viviendas
-
+from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI(
-    title="EnerLink API"
+    title="EnerLink API",
+    description="API para el sistema EnerLink",
+    version="1.0.0"
 )
 #app.include_router(test_router)
 app.include_router(router)
@@ -23,4 +23,17 @@ app.include_router(router_viviendas)
 app.include_router(router_gateways)
 app.include_router(router_tipos_dispositivo)
 app.include_router(router_tipo_usuario)
-security = HTTPBearer()
+#security = HTTPBearer()
+
+
+origins = [
+    "http://localhost:4200",
+]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)

@@ -1,3 +1,4 @@
+#################### CREO QUE ESTO NO ES NECESARIO####################
 from fastapi import Depends
 from fastapi import APIRouter
 from app.security import (get_current_user)
@@ -17,3 +18,7 @@ def obtener_mi_perfil(
   return {
     "mensaje": "Usuario consultado"
 } # return usuario
+
+
+
+#################### CREO QUE ESTO NO ES NECESARIO####################
