@@ -4,5 +4,10 @@ sqlalchemy # comunicacion entre supabase y el API
 psycopg2-binary
 python-dotenv
 pydantic[email]
+<<<<<<< HEAD
 argon2-cffi # encriptacion de la contraseña
+=======
+argon2-cffi  # encriptacion de la contraseña
+>>>>>>> d9ea1e9a369112b8ac818c54447da90fb352b881
 python-jose # JWT (Token) genera el token con la herramienta https://jwt.io
+requests

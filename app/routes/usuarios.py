@@ -104,7 +104,6 @@ def actualizar_usuario(
     }
 
 @router.delete("/me")
-
 def eliminar_usuario(
     usuario_actual = Depends(get_current_user),
     db: Session = Depends(get_db)
@@ -131,3 +130,4 @@ def eliminar_usuario(
     return {
         "mensaje": "Usuario eliminado"
     }
+    

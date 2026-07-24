@@ -1,10 +1,16 @@
+#from urllib import response
 from fastapi import APIRouter
 from fastapi import Depends
-from fastapi import HTTPException
+from fastapi import HTTPException, Response
+from app.security import (get_current_user)
+
+
 from sqlalchemy.orm import Session
 from sqlalchemy import text
+
 from app.database import get_db
-from app.schemas.auth import LoginRequest
+from app.schemas.auth import LoginRequest, LoginResponse
+from app.schemas.usuario import UsuarioActualResponse
 from app.security import (verify_password,create_access_token)
 
 ############# LOGIN DE USUARIO
@@ -20,9 +26,10 @@ def health():
         "status": "ok"
     }
 
-@router.post("/login")
+@router.post("/login", response_model=LoginResponse)
 def login(
     credentials: LoginRequest,
+    response: Response,
     db: Session = Depends(get_db)
 ):
 
@@ -66,9 +73,40 @@ def login(
             "id_rol": usuario["id_rol"],
         }
     )
+    
+    response.set_cookie(
+        key="access_token",
+        value=token,
+        httponly=True,
+        secure=False,   
+        samesite="lax",
+        max_age=3600,
+        path="/"
+    )
+    
+
+    return LoginResponse(
+        mensaje="Login exitoso",
+        access_token=token,
+        token_type="bearer"
+    )
+    
+@router.post("/logout")
+def logout(
+    response: Response
+):
+
+    response.delete_cookie(
+        key="access_token",
+        path="/"
+    )
 
     return {
-        "mensaje": "Login exitoso",
-        "access_token": token,
-        "token_type": "bearer"
+        "mensaje": "Sesión cerrada correctamente"
     }
+    
+@router.get("/me",response_model=UsuarioActualResponse)
+def me(
+    usuario=Depends(get_current_user)
+):
+    return usuario

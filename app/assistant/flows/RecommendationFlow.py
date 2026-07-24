@@ -1,0 +1,102 @@
+from app.assistant.context.user_context import UserContext
+from app.assistant.conversation.conversation_context import ConversationContext
+from app.assistant.conversation.slot_filler import SlotFiller
+from app.assistant.conversation.slot_type import SlotType
+from app.assistant.flows.base_flow import BaseFlow
+from app.assistant.repositories.gateway_repository import GatewayRepository
+from app.assistant.repositories.house_repository import HouseRepository
+
+
+class RecommendationFlow(BaseFlow):
+
+    @property
+    def required_slots(self):
+
+        return [
+            SlotType.HOUSE,
+            SlotType.GATEWAY,
+        ]
+
+    def ask_for_slot(
+        self,
+        slot: SlotType,
+        conversation: ConversationContext,
+        current_user: UserContext,
+    ) -> str:
+
+        if slot == SlotType.HOUSE:
+
+            houses = HouseRepository.get_by_user(
+                current_user.id_usuario
+            )
+
+            if not houses:
+
+                return "No tienes viviendas registradas."
+
+            if len(houses) == 1:
+
+                SlotFiller.fill_slot(
+                    conversation.slots,
+                    SlotType.HOUSE,
+                    houses[0],
+                )
+
+                return self.continue_flow(
+                    conversation,
+                    current_user,
+                )
+
+            text = "¿Sobre cuál vivienda deseas recibir recomendaciones?\n\n"
+
+            for index, house in enumerate(houses, start=1):
+
+                text += f"{index}. {house.nombre}\n"
+
+            return text
+
+        if slot == SlotType.GATEWAY:
+
+            house = SlotFiller.get_slot(
+                conversation.slots,
+                SlotType.HOUSE,
+            ).value
+
+            gateways = GatewayRepository.get_by_house(
+                house.id_vivienda,
+            )
+
+            if not gateways:
+
+                return "La vivienda seleccionada no tiene Gateways registrados."
+
+            if len(gateways) == 1:
+
+                SlotFiller.fill_slot(
+                    conversation.slots,
+                    SlotType.GATEWAY,
+                    gateways[0],
+                )
+
+                return self.continue_flow(
+                    conversation,
+                    current_user,
+                )
+
+            text = "¿De cuál Gateway deseas obtener recomendaciones?\n\n"
+
+            for index, gateway in enumerate(gateways, start=1):
+
+                text += f"{index}. {gateway.nombre}\n"
+
+            return text
+
+        return "No fue posible continuar la conversación."
+
+    def execute(
+        self,
+        conversation: ConversationContext,
+        current_user: UserContext,
+    ) -> str:
+
+        return None

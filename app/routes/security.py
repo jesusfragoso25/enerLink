@@ -1,3 +1,4 @@
+#################### CREO QUE ESTO NO ES NECESARIO####################
 from fastapi import Depends
 from fastapi import APIRouter
 from app.security import (get_current_user)
@@ -12,9 +13,10 @@ router = APIRouter()
 def obtener_mi_perfil(
     usuario_actual=Depends(get_current_user)
 ):
-
     return {
         "nombre_completo": f"{usuario_actual['nombre']} {usuario_actual['apellido']}",
         "telefono": usuario_actual["telefono"],
         "correo": usuario_actual["correo"]
     }
+
+
